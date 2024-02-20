@@ -127,7 +127,6 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | allowed\_ec2\_instance\_types | EC2 instances types allowed for use | `list(string)` | ```[ "" ]``` | no |
 | allowed\_regions | AWS Regions allowed for use (for use with the restrict regions SCP) | `list(string)` | ```[ "" ]``` | no |
-| allowed\_regions | AWS Regions allowed for use (for use with the restrict regions SCP) | `list(string)` | ```[ "" ]``` | no |
 | enforce\_mfa | Whether to enforce MFA on specified actions (see enforce_mfa_actions) | `bool` | `false` | no |
 | enforce\_mfa\_actions | IAM actions on which to enforce MFA | `list(string)` | ```[ "" ]``` | no |
 | deny\_all | If false, create a combined policy. If true, deny all access | `bool` | `false` | no |

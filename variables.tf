@@ -100,6 +100,36 @@ variable "deny_s3_bucket_public_access_resources" {
   default     = [""]
 }
 
+variable "deny_aws_config" {
+  description = "Deny changes to AWS config"
+  type        = bool
+  default     = false
+}
+
+variable "deny_cloudwatch" {
+  description = "Deny any changes to CloudWatch config"
+  type        = bool
+  default     = false
+}
+
+variable "deny_disable_ebs_default_encryption" {
+  description = "Deny the ability to disable default encryption from EBS snapshots"
+  type        = bool
+  default     = false
+}
+
+variable "deny_guardduty" {
+  description = "Deny changes to GuardDuty config"
+  type        = bool
+  default     = false
+}
+
+variable "deny_vpc_internet_access" {
+  description = "Deny a VPC internet access if it does not already have it"
+  type        = bool
+  default     = false
+}
+
 variable "protect_iam_role_resources" {
   description = "IAM role resource ARNs to protect from modification and deletion"
   type        = list(string)
@@ -116,6 +146,18 @@ variable "allowed_ec2_instance_types" {
   description = "EC2 instances types allowed for use"
   type        = list(string)
   default     = [""]
+}
+
+variable "enforce_mfa" {
+  description = "Whether to enforce MFA on specified actions (see enforce_mfa_actions)"
+  type        = bool
+  default     = false
+}
+
+variable "enforce_mfa_actions" {
+  description = "IAM Actions on which to enforce MFA"
+  type        = list(string)
+  default     = []
 }
 
 variable "tags" {

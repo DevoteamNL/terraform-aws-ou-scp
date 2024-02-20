@@ -155,7 +155,7 @@ variable "enforce_mfa" {
 }
 
 variable "enforce_mfa_actions" {
-  description = "IAM Actions on which to enforce MFA"
+  description = "IAM actions on which to enforce MFA"
   type        = list(string)
   default     = []
 }

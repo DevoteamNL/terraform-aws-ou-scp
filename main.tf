@@ -20,6 +20,14 @@ locals {
   limit_regions_statement                    = var.limit_regions ? [""] : []
   deny_unencrypted_object_uploads_statement  = var.require_s3_encryption ? [""] : []
   deny_incorrect_encryption_header_statement = var.require_s3_encryption ? [""] : []
+
+  # Additional policies added by Devoteam
+  deny_aws_config                     = var.deny_aws_config ? [""] : []
+  deny_cloudwatch                     = var.deny_cloudwatch ? [""] : []
+  deny_disable_ebs_default_encryption = var.deny_disable_ebs_default_encryption ? [""] : []
+  deny_guardduty                      = var.deny_guardduty ? [""] : []
+  deny_vpc_internet_access            = var.deny_vpc_internet_access ? [""] : []
+  enforce_mfa                         = var.enforce_mfa ? [""] : []
 }
 
 #
@@ -312,6 +320,152 @@ data "aws_iam_policy_document" "combined_policy_block" {
         test     = "Null"
         variable = "s3:x-amz-server-side-encryption"
         values   = [true]
+      }
+    }
+  }
+
+  # 
+  # Deny changes to AWS Config
+  #
+
+  dynamic "statement" {
+    for_each = local.deny_aws_config
+    content {
+      sid    = "DenyChangesToAWSConfig"
+      effect = "Deny"
+      actions = [
+        "config:DeleteConfigRule",
+        "config:DeleteConfigurationRecorder",
+        "config:DeleteDeliveryChannel",
+        "config:StopConfigurationRecorder"
+      ]
+      resources = ["*"]
+    }
+  }
+
+  # 
+  # Deny changes to CloudWatch config
+  #
+
+  dynamic "statement" {
+    for_each = local.deny_cloudwatch
+    content {
+      sid    = "DenyChangesToCloudWatch"
+      effect = "Deny"
+      actions = [
+        "cloudwatch:DeleteAlarms",
+        "cloudwatch:DeleteDashboards",
+        "cloudwatch:DisableAlarmActions",
+        "cloudwatch:PutDashboard",
+        "cloudwatch:PutMetricAlarm",
+        "cloudwatch:SetAlarmState"
+      ]
+      resources = ["*"]
+    }
+  }
+
+
+  # 
+  # Deny changes to GuardDuty config
+  #
+
+  dynamic "statement" {
+    for_each = local.deny_guardduty
+    content {
+      sid    = "DenyChangesToGuardDuty"
+      effect = "Deny"
+      actions = [
+        "guardduty:AcceptInvitation",
+        "guardduty:ArchiveFindings",
+        "guardduty:CreateDetector",
+        "guardduty:CreateFilter",
+        "guardduty:CreateIPSet",
+        "guardduty:CreateMembers",
+        "guardduty:CreatePublishingDestination",
+        "guardduty:CreateSampleFindings",
+        "guardduty:CreateThreatIntelSet",
+        "guardduty:DeclineInvitations",
+        "guardduty:DeleteDetector",
+        "guardduty:DeleteFilter",
+        "guardduty:DeleteInvitations",
+        "guardduty:DeleteIPSet",
+        "guardduty:DeleteMembers",
+        "guardduty:DeletePublishingDestination",
+        "guardduty:DeleteThreatIntelSet",
+        "guardduty:DisassociateFromMasterAccount",
+        "guardduty:DisassociateMembers",
+        "guardduty:InviteMembers",
+        "guardduty:StartMonitoringMembers",
+        "guardduty:StopMonitoringMembers",
+        "guardduty:TagResource",
+        "guardduty:UnarchiveFindings",
+        "guardduty:UntagResource",
+        "guardduty:UpdateDetector",
+        "guardduty:UpdateFilter",
+        "guardduty:UpdateFindingsFeedback",
+        "guardduty:UpdateIPSet",
+        "guardduty:UpdatePublishingDestination",
+        "guardduty:UpdateThreatIntelSet"
+      ]
+      resources = ["*"]
+    }
+  }
+
+
+  # 
+  # Deny the ability to disable default encryption from EBS snapshots
+  #
+
+  dynamic "statement" {
+    for_each = local.deny_disable_ebs_default_encryption
+    content {
+      sid    = "DenyDisablingEBSDefaultEncryption"
+      effect = "Deny"
+      actions = [
+        "ec2:DisableEbsEncryptionByDefault"
+      ]
+      resources = ["*"]
+    }
+  }
+
+  # 
+  # Deny a VPC internet access if it does not already have it
+  # VPCs already with internet connection are unaffected
+  #
+
+  dynamic "statement" {
+    for_each = local.deny_vpc_internet_access
+    content {
+      sid    = "DenyExposingVPCToInternet"
+      effect = "Deny"
+      actions = [
+        "ec2:AttachInternetGateway",
+        "ec2:CreateInternetGateway",
+        "ec2:CreateEgressOnlyInternetGateway",
+        "ec2:CreateVpcPeeringConnection",
+        "ec2:AcceptVpcPeeringConnection",
+        "globalaccelerator:Create*",
+        "globalaccelerator:Update*"
+      ]
+      resources = ["*"]
+    }
+  }
+
+  # 
+  # Enforce MFA
+  #
+
+  dynamic "statement" {
+    for_each = local.enforce_mfa
+    content {
+      sid       = "EnforceMFA"
+      effect    = "Deny"
+      actions   = var.enforce_mfa_actions
+      resources = ["*"]
+      condition {
+        test     = "BoolIfExists"
+        variable = "aws:MultiFactorAuthPresent"
+        values   = [false]
       }
     }
   }

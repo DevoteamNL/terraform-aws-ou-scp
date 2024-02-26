@@ -127,15 +127,22 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | allowed\_ec2\_instance\_types | EC2 instances types allowed for use | `list(string)` | ```[ "" ]``` | no |
 | allowed\_regions | AWS Regions allowed for use (for use with the restrict regions SCP) | `list(string)` | ```[ "" ]``` | no |
+| enforce\_mfa | Whether to enforce MFA on specified actions (see enforce_mfa_actions) | `bool` | `false` | no |
+| enforce\_mfa\_actions | IAM actions on which to enforce MFA | `list(string)` | ```[ "" ]``` | no |
 | deny\_all | If false, create a combined policy. If true, deny all access | `bool` | `false` | no |
+| deny\_aws\_config | Deny changes to AWS config. | `bool` | `false` | no |
+| deny\_cloudwatch | Deny any changes to CloudWatch config. | `bool` | `false` | no |
 | deny\_creating\_iam\_users | DenyCreatingIAMUsers in the OU policy. | `bool` | `false` | no |
 | deny\_deleting\_cloudwatch\_logs | DenyDeletingCloudwatchLogs in the OU policy. | `bool` | `false` | no |
 | deny\_deleting\_kms\_keys | DenyDeletingKMSKeys in the OU policy. | `bool` | `false` | no |
 | deny\_deleting\_route53\_zones | DenyDeletingRoute53Zones in the OU policy. | `bool` | `false` | no |
+| deny\_disable\_ebs\_default\_encryption | Deny the ability to disable default encryption from EBS snapshots. | `bool` | `false` | no |
+| deny\_guardduty | Deny changes to GuardDuty config. | `bool` | `false` | no |
 | deny\_leaving\_orgs | DenyLeavingOrgs in the OU policy. | `bool` | `false` | no |
 | deny\_root\_account | DenyRootAccount in the OU policy. | `bool` | `false` | no |
 | deny\_s3\_bucket\_public\_access\_resources | S3 bucket resource ARNs to block public access | `list(string)` | ```[ "" ]``` | no |
 | deny\_s3\_buckets\_public\_access | DenyS3BucketsPublicAccess in the OU policy. | `bool` | `false` | no |
+| deny\_vpc\_internet\_\_access | Deny a VPC internet access if it does not already have it. | `bool` | `false` | no |
 | limit\_ec2\_instance\_types | LimitEC2InstanceTypes in the OU policy. | `bool` | `false` | no |
 | limit\_regions | LimitRegions in the OU policy. | `bool` | `false` | no |
 | protect\_iam\_role\_resources | IAM role resource ARNs to protect from modification and deletion | `list(string)` | ```[ "" ]``` | no |
